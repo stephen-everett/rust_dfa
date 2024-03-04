@@ -49,7 +49,7 @@ fn main() {
         Accept
     }
  
-    let test_string = "hekasdldhjrahhelphillohaksdhlphiliprakjehHEllasdklhjgaphilipsdhkphiljHellphilipaslasdhlgjasdlhHelloarahsdgasdgasdgWorldasdgasdgsadg".to_string();
+    let test_string = "pphiliprrah".to_string();
     let mut dfa = ParentDFA::FirstDFA(States::Start);
 
     for char in test_string.chars() {
@@ -65,6 +65,7 @@ fn main() {
                     States::P => {
                         match char {
                             'h' => dfa = ParentDFA::FirstDFA(States::H),
+                            'p' => dfa = ParentDFA::FirstDFA(States::P),
                             _ => dfa = ParentDFA::FirstDFA(States::Start)
                         };
                     }
@@ -105,6 +106,7 @@ fn main() {
                     SecondStates::R => {
                         match char {
                             'a' => dfa = ParentDFA::SecondDFA(SecondStates::A),
+                            'r' => dfa = ParentDFA::SecondDFA(SecondStates::R),
                             _ => dfa = ParentDFA::SecondDFA(SecondStates::Start)
                         }
                     }
@@ -166,7 +168,7 @@ fn main() {
     let string_arr = [String::from("philip"), String::from("rah")]; // add extra strings to look for more than only 2 strings
 
     // string to search against
-    let test_string = String::from("WorldaslkajsdglkjsdgrawaophilrlphdHephiliplloWorldsdkglaksdjgrahHellaWorldsdklgjasdlkTestalksdjhTestlkjHelloaslkdjglaksdjg");
+    let test_string = String::from("asdpphiliprah");
 
     // intialize starting values
     let mut string_arr_index = 0;
@@ -220,7 +222,15 @@ fn main() {
                             target_iterator = string_arr[string_arr_index].char_indices();
                             match target_iterator.next() {
                                 Some((_,start_char)) => {
-                                    test_dfa = DFANode::RunningState(State{delta_char:Some(start_char)})
+                                    if char == start_char {
+                                        match target_iterator.next() {
+                                            Some((_, char_2)) => DFANode::RunningState(State{delta_char:Some(char_2)}),
+                                            None => DFANode::RunningState(State{delta_char:None})
+                                        };
+                                    }
+                                    else {
+                                        test_dfa = DFANode::RunningState(State{delta_char:Some(start_char)})
+                                    }
                                 },
                                 None => ()
                             }
