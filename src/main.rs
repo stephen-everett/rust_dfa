@@ -49,7 +49,7 @@ fn main() {
         Accept
     }
  
-    let test_string = "pphiliprrah".to_string();
+    let test_string = "pphilphiliprarrrarah".to_string();
     let mut dfa = ParentDFA::FirstDFA(States::Start);
 
     for char in test_string.chars() {
@@ -72,18 +72,21 @@ fn main() {
                     States::H => {
                         match char {
                             'i' => dfa = ParentDFA::FirstDFA(States::I),
+                            'p' => dfa = ParentDFA::FirstDFA(States::P),
                             _ => dfa = ParentDFA::FirstDFA(States::Start)
                         };
                     }
                     States::I => {
                         match char {
                             'l' => dfa = ParentDFA::FirstDFA(States::L),
+                            'p' => dfa = ParentDFA::FirstDFA(States::P),
                             _ => dfa = ParentDFA::FirstDFA(States::Start)
                         };
                     }
                     States::L => {
                         match char {
                             'i' => dfa = ParentDFA::FirstDFA(States::I2),
+                            'p' => dfa = ParentDFA::FirstDFA(States::P),
                             _ => dfa = ParentDFA::FirstDFA(States::Start)
                         };
                     }
@@ -113,6 +116,7 @@ fn main() {
                     SecondStates::A => {
                         match char {
                             'h' => dfa = ParentDFA::SecondDFA(SecondStates::Accept),
+                            'r' => dfa = ParentDFA::SecondDFA(SecondStates::R),
                             _ => dfa = ParentDFA::SecondDFA(SecondStates::Start)
                         }
                     }
@@ -163,12 +167,12 @@ fn main() {
         RunningState(State),
         Accept
     }
-
+ 
     // initialize the strings to look for 
-    let string_arr = [String::from("philip"), String::from("rah")]; // add extra strings to look for more than only 2 strings
+    let string_arr = [String::from("khirby"), String::from("calma")]; // add extra strings to look for more than only 2 strings
 
     // string to search against
-    let test_string = String::from("asdpphiliprah");
+    let test_string = String::from("khkhikhirbyrbyccalma");
 
     // intialize starting values
     let mut string_arr_index = 0;
@@ -219,7 +223,14 @@ fn main() {
                         }
                         // if c != char, then reset iterator and state to the start of the current string
                         else {
-                            target_iterator = string_arr[string_arr_index].char_indices();
+                            if char == string_arr[string_arr_index].chars().next().unwrap() {
+                                target_iterator = string_arr[string_arr_index].char_indices();
+                                target_iterator.next();
+                            }
+                            else {
+                                target_iterator = string_arr[string_arr_index].char_indices();
+                            }
+                            
                             match target_iterator.next() {
                                 Some((_,start_char)) => {
                                     if char == start_char {
