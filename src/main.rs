@@ -144,28 +144,28 @@ fn main() {
     // test cases
     println!("Testing first DFA implemntation...");
     let test_string = String::from("philiprah");
-    println!("\nTesting {:?} ...", test_string);
+    println!("\nTesting {:?} ...\n Expect: Accept", test_string);
     first_dfa(test_string);
 
     let test_string = String::from("pphiliprrah");
-    println!("\nTesting {:?} ...", test_string);
+    println!("\nTesting {:?} ...\n Expect: Accept", test_string);
     first_dfa(test_string);
 
 
     let test_string = String::from("philphiphiliprrarahhdkg");
-    println!("\nTesting {:?} ...", test_string);
+    println!("\nTesting {:?} ... \n Expect: Accept", test_string);
     first_dfa(test_string);
     
     let test_string = String::from("philphphilipiprararahhrahh");
-    println!("\nTesting {:?} ...", test_string);
+    println!("\nTesting {:?} ... \n Expect: Accept", test_string);
     first_dfa(test_string);
 
     let test_string = String::from("");
-    println!("\nTesting {:?} (empty string)...", test_string);
+    println!("\nTesting {:?} (empty string)...\n Expect: Reject", test_string);
     first_dfa(test_string);
 
     let test_string = String::from("asdgasdgrahasdgasdgphilip");
-    println!("\nTesting {:?} ...", test_string);
+    println!("\nTesting {:?} ... \n Expect: Reject", test_string);
     first_dfa(test_string);
 
     /*
@@ -189,105 +189,135 @@ fn main() {
         4.) If target_iterator.next() returns None, and we are at the end of the string_arr, then move DFANode to the Accept state
      */
 
-    // define State and DFANode
-    pub struct State{
-        delta_char: Option<char>
-    }
+     pub fn second_dfa(test_string:String) {
+        // define State and DFANode
+        pub struct State{
+            delta_char: Option<char>
+        }
 
-    pub enum DFANode {
-        RunningState(State),
-        Accept
-    }
- 
-    // initialize the strings to look for 
-    let string_arr = [String::from("khirby"), String::from("calma")]; // add extra strings to look for more than only 2 strings
+        pub enum DFANode {
+            RunningState(State),
+            Accept
+        }
+    
+        // initialize the strings to look for 
+        let string_arr = [String::from("philip"), String::from("rah")]; // add extra strings to look for more than only 2 strings
 
-    // string to search against
-    let test_string = String::from("khkhikhirbyrbyccalma");
+        // string to search against
+        //let test_string = String::from("khkhikhirbyrbyccalma");
 
-    // intialize starting values
-    let mut string_arr_index = 0;
-    let mut target_iterator = string_arr[string_arr_index].char_indices();
+        // intialize starting values
+        let mut string_arr_index = 0;
+        let mut target_iterator = string_arr[string_arr_index].char_indices();
 
-    // get first character in first element of string_arr. If empty then the state is set
-    // If empty then eventually reject
-    let mut test_dfa = match target_iterator.next() {
-        Some((_, char)) => DFANode::RunningState(State{delta_char:Some(char)}),
-        None => DFANode::RunningState(State{delta_char:None})
-    };
+        // get first character in first element of string_arr. If empty then the state is set
+        // If empty then eventually reject
+        let mut test_dfa = match target_iterator.next() {
+            Some((_, char)) => DFANode::RunningState(State{delta_char:Some(char)}),
+            None => DFANode::RunningState(State{delta_char:None})
+        };
 
-    // iterate through test_string characters
-    for char in test_string.chars(){
+        // iterate through test_string characters
+        for char in test_string.chars(){
 
-        // test_dfa will be RunningState, or Accept. If accept, then do nothing
-        match test_dfa {
-           DFANode::RunningState(ref state) => {
-                match state.delta_char {
-                    Some(c) => {
-                        // compare current char to delta_char
-                        if c == char {
-                            
-                            // grab next character target_iterator. 
-                            match target_iterator.next() {
-                                Some((_,char_2)) => {
-                                    test_dfa = DFANode::RunningState(State{delta_char:Some(char_2)})
-                                }
-                                // if None then check if there is another string in str_arr, or else move to accept
-                                None => {
-                                    test_dfa = match string_arr_index >= string_arr.len()-1 {
-                                        true => DFANode::Accept,
-                                        false => {
-                                            string_arr_index += 1;
-                                            target_iterator = string_arr[string_arr_index].char_indices();
-                                            match target_iterator.next() {
-                                                Some((_, start_char)) => {
-                                                    DFANode::RunningState(State{delta_char:Some(start_char)})
+            // test_dfa will be RunningState, or Accept. If accept, then do nothing
+            match test_dfa {
+            DFANode::RunningState(ref state) => {
+                    match state.delta_char {
+                        Some(c) => {
+                            // compare current char to delta_char
+                            if c == char {
+                                
+                                // grab next character target_iterator. 
+                                match target_iterator.next() {
+                                    Some((_,char_2)) => {
+                                        test_dfa = DFANode::RunningState(State{delta_char:Some(char_2)})
+                                    }
+                                    // if None then check if there is another string in str_arr, or else move to accept
+                                    None => {
+                                        test_dfa = match string_arr_index >= string_arr.len()-1 {
+                                            true => DFANode::Accept,
+                                            false => {
+                                                string_arr_index += 1;
+                                                target_iterator = string_arr[string_arr_index].char_indices();
+                                                match target_iterator.next() {
+                                                    Some((_, start_char)) => {
+                                                        DFANode::RunningState(State{delta_char:Some(start_char)})
+                                                    }
+                                                    None => DFANode::RunningState(State{delta_char:None})
                                                 }
-                                                None => DFANode::RunningState(State{delta_char:None})
-                                            }
-                                        },
-                                    };
-                                    
-                                }
-                                    
-                            }
-                        }
-                        // if c != char, then reset iterator and state to the start of the current string
-                        else {
-                            if char == string_arr[string_arr_index].chars().next().unwrap() {
-                                target_iterator = string_arr[string_arr_index].char_indices();
-                                target_iterator.next();
-                            }
-                            else {
-                                target_iterator = string_arr[string_arr_index].char_indices();
-                            }
-                            
-                            match target_iterator.next() {
-                                Some((_,start_char)) => {
-                                    if char == start_char {
-                                        match target_iterator.next() {
-                                            Some((_, char_2)) => DFANode::RunningState(State{delta_char:Some(char_2)}),
-                                            None => DFANode::RunningState(State{delta_char:None})
+                                            },
                                         };
+                                        
                                     }
-                                    else {
-                                        test_dfa = DFANode::RunningState(State{delta_char:Some(start_char)})
-                                    }
-                                },
-                                None => ()
+                                        
+                                }
+                            }
+                            // if c != char, then reset iterator and state to the start of the current string
+                            else {
+                                if char == string_arr[string_arr_index].chars().next().unwrap() {
+                                    target_iterator = string_arr[string_arr_index].char_indices();
+                                    target_iterator.next();
+                                }
+                                else {
+                                    target_iterator = string_arr[string_arr_index].char_indices();
+                                }
+                                
+                                match target_iterator.next() {
+                                    Some((_,start_char)) => {
+                                        if char == start_char {
+                                            match target_iterator.next() {
+                                                Some((_, char_2)) => DFANode::RunningState(State{delta_char:Some(char_2)}),
+                                                None => DFANode::RunningState(State{delta_char:None})
+                                            };
+                                        }
+                                        else {
+                                            test_dfa = DFANode::RunningState(State{delta_char:Some(start_char)})
+                                        }
+                                    },
+                                    None => ()
+                                }
                             }
                         }
+                        None => (),
                     }
-                    None => (),
-                }
-            },
-            DFANode::Accept => (),
+                },
+                DFANode::Accept => (),
+            }
+        }
+
+        match test_dfa {
+            DFANode::Accept => println!("String accepted!"),
+            _ => println!("Rejected")
         }
     }
 
-    match test_dfa {
-        DFANode::Accept => println!("String accepted!"),
-        _ => println!("Rejected")
-    }
+        // test cases
+        println!("\n===========================================");
+        println!("Testing second DFA implemntation...");
+        let test_string = String::from("philiprah");
+        println!("\nTesting {:?} ...\n Expect: Accept", test_string);
+        second_dfa(test_string);
+    
+        let test_string = String::from("pphiliprrah");
+        println!("\nTesting {:?} ...\n Expect: Accept", test_string);
+        second_dfa(test_string);
+    
+    
+        let test_string = String::from("philphiphiliprrarahhdkg");
+        println!("\nTesting {:?} ... \n Expect: Accept", test_string);
+        second_dfa(test_string);
+        
+        let test_string = String::from("philphphilipiprararahhrahh");
+        println!("\nTesting {:?} ... \n Expect: Accept", test_string);
+        second_dfa(test_string);
+    
+        let test_string = String::from("");
+        println!("\nTesting {:?} (empty string)...\n Expect: Reject", test_string);
+        second_dfa(test_string);
+    
+        let test_string = String::from("asdgasdgrahasdgasdgphilip");
+        println!("\nTesting {:?} ... \n Expect: Reject", test_string);
+        second_dfa(test_string);
 
 }
