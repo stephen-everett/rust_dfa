@@ -28,114 +28,145 @@ fn main() {
          After it is over, we check the type of ParentDFA. If it's of type SecondStates::Accept, then the string has been accepted.
          If it's any other state, then the string is rejected.
     */
-    enum ParentDFA {
-        FirstDFA(States),
-        SecondDFA(SecondStates)
-    }
-    enum States{
-        Start,
-        P,
-        H,
-        I,
-        L,
-        I2,
-    }
 
-    #[derive(Clone)]
-    enum SecondStates {
-        Start,
-        R,
-        A,
-        Accept
-    }
- 
-    let test_string = "pphilphiliprarrrarah".to_string();
-    let mut dfa = ParentDFA::FirstDFA(States::Start);
-
-    for char in test_string.chars() {
-        match dfa {
-            ParentDFA::FirstDFA(first_dfa) => {
-                match first_dfa {
-                    States::Start => {
-                        match char {
-                            'p' => dfa = ParentDFA::FirstDFA(States::P),
-                            _ => dfa = ParentDFA::FirstDFA(States::Start)
-                        };
-                    }
-                    States::P => {
-                        match char {
-                            'h' => dfa = ParentDFA::FirstDFA(States::H),
-                            'p' => dfa = ParentDFA::FirstDFA(States::P),
-                            _ => dfa = ParentDFA::FirstDFA(States::Start)
-                        };
-                    }
-                    States::H => {
-                        match char {
-                            'i' => dfa = ParentDFA::FirstDFA(States::I),
-                            'p' => dfa = ParentDFA::FirstDFA(States::P),
-                            _ => dfa = ParentDFA::FirstDFA(States::Start)
-                        };
-                    }
-                    States::I => {
-                        match char {
-                            'l' => dfa = ParentDFA::FirstDFA(States::L),
-                            'p' => dfa = ParentDFA::FirstDFA(States::P),
-                            _ => dfa = ParentDFA::FirstDFA(States::Start)
-                        };
-                    }
-                    States::L => {
-                        match char {
-                            'i' => dfa = ParentDFA::FirstDFA(States::I2),
-                            'p' => dfa = ParentDFA::FirstDFA(States::P),
-                            _ => dfa = ParentDFA::FirstDFA(States::Start)
-                        };
-                    }
-                    States::I2 => {
-                        match char {
-                            'p' => dfa = ParentDFA::SecondDFA(SecondStates::Start),
-                            _ => dfa = ParentDFA::FirstDFA(States::Start)
-                        };
-                    }
-                }
-            }
-            ParentDFA::SecondDFA(ref second_dfa) => {
-                match second_dfa {
-                    SecondStates::Start => {
-                        match char {
-                            'r' => dfa = ParentDFA::SecondDFA(SecondStates::R),
-                            _ => dfa = ParentDFA::SecondDFA(SecondStates::Start)
-                        }
-                    }
-                    SecondStates::R => {
-                        match char {
-                            'a' => dfa = ParentDFA::SecondDFA(SecondStates::A),
-                            'r' => dfa = ParentDFA::SecondDFA(SecondStates::R),
-                            _ => dfa = ParentDFA::SecondDFA(SecondStates::Start)
-                        }
-                    }
-                    SecondStates::A => {
-                        match char {
-                            'h' => dfa = ParentDFA::SecondDFA(SecondStates::Accept),
-                            'r' => dfa = ParentDFA::SecondDFA(SecondStates::R),
-                            _ => dfa = ParentDFA::SecondDFA(SecondStates::Start)
-                        }
-                    }
-                    SecondStates::Accept => (),
-                }
-            }
+    // this DFA will only work for the name "philip rah"
+    fn first_dfa(test_string: String) {
+        enum ParentDFA {
+            FirstDFA(States),
+            SecondDFA(SecondStates)
         }
-            
-    }
+        enum States{
+            Start,
+            P,
+            H,
+            I,
+            L,
+            I2,
+        }
 
-    match dfa {
-        ParentDFA::SecondDFA(state) => {
-            match state {
-                SecondStates::Accept => println!("String accepted!"),
-                _ => println!("String rejected!")
+        #[derive(Clone)]
+        enum SecondStates {
+            Start,
+            R,
+            A,
+            Accept
+        }
+    
+        //let test_string = "pphilphiliprarrrarah".to_string();
+        let mut dfa = ParentDFA::FirstDFA(States::Start);
+
+        for char in test_string.chars() {
+            match dfa {
+                ParentDFA::FirstDFA(first_dfa) => {
+                    match first_dfa {
+                        States::Start => {
+                            match char {
+                                'p' => dfa = ParentDFA::FirstDFA(States::P),
+                                _ => dfa = ParentDFA::FirstDFA(States::Start)
+                            };
+                        }
+                        States::P => {
+                            match char {
+                                'h' => dfa = ParentDFA::FirstDFA(States::H),
+                                'p' => dfa = ParentDFA::FirstDFA(States::P),
+                                _ => dfa = ParentDFA::FirstDFA(States::Start)
+                            };
+                        }
+                        States::H => {
+                            match char {
+                                'i' => dfa = ParentDFA::FirstDFA(States::I),
+                                'p' => dfa = ParentDFA::FirstDFA(States::P),
+                                _ => dfa = ParentDFA::FirstDFA(States::Start)
+                            };
+                        }
+                        States::I => {
+                            match char {
+                                'l' => dfa = ParentDFA::FirstDFA(States::L),
+                                'p' => dfa = ParentDFA::FirstDFA(States::P),
+                                _ => dfa = ParentDFA::FirstDFA(States::Start)
+                            };
+                        }
+                        States::L => {
+                            match char {
+                                'i' => dfa = ParentDFA::FirstDFA(States::I2),
+                                'p' => dfa = ParentDFA::FirstDFA(States::P),
+                                _ => dfa = ParentDFA::FirstDFA(States::Start)
+                            };
+                        }
+                        States::I2 => {
+                            match char {
+                                'p' => dfa = ParentDFA::SecondDFA(SecondStates::Start),
+                                _ => dfa = ParentDFA::FirstDFA(States::Start)
+                            };
+                        }
+                    }
+                }
+                ParentDFA::SecondDFA(ref second_dfa) => {
+                    match second_dfa {
+                        SecondStates::Start => {
+                            match char {
+                                'r' => dfa = ParentDFA::SecondDFA(SecondStates::R),
+                                _ => dfa = ParentDFA::SecondDFA(SecondStates::Start)
+                            }
+                        }
+                        SecondStates::R => {
+                            match char {
+                                'a' => dfa = ParentDFA::SecondDFA(SecondStates::A),
+                                'r' => dfa = ParentDFA::SecondDFA(SecondStates::R),
+                                _ => dfa = ParentDFA::SecondDFA(SecondStates::Start)
+                            }
+                        }
+                        SecondStates::A => {
+                            match char {
+                                'h' => dfa = ParentDFA::SecondDFA(SecondStates::Accept),
+                                'r' => dfa = ParentDFA::SecondDFA(SecondStates::R),
+                                _ => dfa = ParentDFA::SecondDFA(SecondStates::Start)
+                            }
+                        }
+                        SecondStates::Accept => (),
+                    }
+                }
             }
-        },
-        _ => println!("String rejected!")
-    };
+                
+        }
+
+        match dfa {
+            ParentDFA::SecondDFA(state) => {
+                match state {
+                    SecondStates::Accept => println!("String accepted!"),
+                    _ => println!("String rejected!")
+                }
+            },
+            _ => println!("String rejected!")
+        };
+}
+
+    // test cases
+    println!("Testing first DFA implemntation...");
+    let test_string = String::from("philiprah");
+    println!("\nTesting {:?} ...", test_string);
+    first_dfa(test_string);
+
+    let test_string = String::from("pphiliprrah");
+    println!("\nTesting {:?} ...", test_string);
+    first_dfa(test_string);
+
+
+    let test_string = String::from("philphiphiliprrarahhdkg");
+    println!("\nTesting {:?} ...", test_string);
+    first_dfa(test_string);
+    
+    let test_string = String::from("philphphilipiprararahhrahh");
+    println!("\nTesting {:?} ...", test_string);
+    first_dfa(test_string);
+
+    let test_string = String::from("");
+    println!("\nTesting {:?} (empty string)...", test_string);
+    first_dfa(test_string);
+
+    let test_string = String::from("asdgasdgrahasdgasdgphilip");
+    println!("\nTesting {:?} ...", test_string);
+    first_dfa(test_string);
 
     /*
         Second Implementation:
